@@ -2,13 +2,15 @@ import random
 import string
 from typing import Union, Dict
 
-# Name Assignment (variables and constants)
+# Constants
 MINING_REWARD = 3.125
-current_block_height = 800000
 BTC_TO_SATS = 100_000_000
 
 
-# Functions
+# -----------------------
+# Core Functions
+# -----------------------
+
 def calculate_total_reward(blocks_mined) -> float:
     return blocks_mined * MINING_REWARD
 
@@ -18,15 +20,15 @@ def is_valid_tx_fee(fee):
 
 
 def is_large_balance(balance):
-    return balance >= 50.0
+    return balance >= 100.0
 
 
 def tx_priority(size_bytes, fee_btc):
     fee_rate = fee_btc / size_bytes
 
-    if fee_rate >= 0.00005:
+    if fee_rate >= 0.0001:
         return "high"
-    elif fee_rate >= 0.00001:
+    elif fee_rate >= 0.00005:
         return "medium"
     else:
         return "low"
@@ -41,7 +43,7 @@ def is_in_range(value):
 
 
 def is_same_wallet(wallet1, wallet2):
-    return wallet1 is wallet2
+    return wallet1 == wallet2
 
 
 def normalize_address(address):
@@ -49,8 +51,7 @@ def normalize_address(address):
 
 
 def add_utxo(utxos, new_utxo):
-    utxos.append(new_utxo)
-    return utxos
+    return utxos + [new_utxo]
 
 
 def find_high_fee(fee_list):
@@ -63,7 +64,7 @@ def get_wallet_details():
 
 
 def get_tx_status(tx_pool, txid):
-    return tx_pool.get(txid, "not found")
+    return tx_pool.get(txid, "pending")
 
 
 def unpack_wallet_info(wallet_info):
@@ -108,7 +109,7 @@ def find_utxo_with_min_value(utxos, target):
     valid_utxos = [u for u in utxos if u["value"] >= target]
 
     if not valid_utxos:
-        return {}
+        return None
 
     return min(valid_utxos, key=lambda x: x["value"])
 
